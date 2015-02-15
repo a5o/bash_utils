@@ -30,8 +30,8 @@ function flac_convert {
 	TMPFILE=$(mktemp --tmpdir=/tmp/)
 	flac -d $1 -f -o $TMPFILE
 	mkdir $(echo $ARTIST |sed -e 's/[^A-Za-z0-9._-]/_/g')
-	mkdir $(echo $ARTIST/$ALBUM |sed -e 's/[^A-Za-z0-9._-]/_/g')
-	OUTFILE=$(echo $ARTIST/$ALBUM/`basename $1 flac`mp3 | sed -e 's/[^A-Za-z0-9._-]/_/g')
+	mkdir $(echo $ARTIST|sed -e 's/[^A-Za-z0-9._-]/_/g')/$(echo $ALBUM |sed -e 's/[^A-Za-z0-9._-]/_/g')
+	OUTFILE=$(echo $ARTIST|sed -e 's/[^A-Za-z0-9._-]/_/g')/$(echo $ALBUM|sed -e 's/[^A-Za-z0-9._-]/_/g')/$(echo `basename $1 flac`mp3 | sed -e 's/[^A-Za-z0-9._-]/_/g')
 	lame -V 0 $TMPFILE $OUTFILE
 	mp3info -a "$ARTIST" $OUTFILE
 	mp3info -g $GENRE $OUTFILE
