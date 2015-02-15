@@ -1,0 +1,57 @@
+#!/bin/bash
+
+function flac_convert {
+	ARTIST=`metaflac --show-tag=ARTIST $1|cut -d = -f 2`
+	if [ "!$ARTIST" = "!" ]; then
+		ARTIST=Unknown
+	fi
+	ALBUM=`metaflac --show-tag=ALBUM $1|cut -d = -f 2`
+	if [ "!$ALBUM" = "!" ]; then
+		ALBUM=Unknown
+	fi
+	TITLE=`metaflac --show-tag=TITLE $1|cut -d = -f 2`
+	if [ "!$TITLE" = "!" ]; then
+		TITLE=Unknown
+	fi
+	TRACK_NUMBER=`metaflac --show-tag=TRACK_NUMBER $1|cut -d = -f 2`
+	if [ "!$TRACK_NUMBER" = "!" ]; then
+		TRACK_NUMBER=0
+	fi
+	DATE=`metaflac --show-tag=DATE $1|cut -d = -f 2`
+	if [ "!$DATE" = "!" ]; then
+		DATE=0000
+	fi
+	#GENRE=`metaflac --show-tag=GENRE $1|cut -d = -f 2|sed \
+	#-e "s/^r/R/"`
+	GENRE=`metaflac --show-tag=GENRE $1|cut -d = -f 2`
+	if [ "!$GENRE" = "!" ]; then
+		GENRE=0
+	fi
+	TMPFILE=$(mktemp --tmpdir=/tmp/)
+	flac -d $1 -f -o $TMPFILE
+	mkdir $ARTIST
+	mkdir $ARTIST/$ALBUM
+	OUTFILE=$ARTIST/$ALBUM/`basename $1 flac`mp3
+	lame -V 0 $TMPFILE $OUTFILE
+	mp3info -a "$ARTIST" $OUTFILE
+	mp3info -g $GENRE $OUTFILE
+	mp3info -g $GENRE  $OUTFILE
+	mp3info -l "$ALBUM" $OUTFILE
+	mp3info -y "$DATE" $OUTFILE
+	mp3info -n $TRACK_NUMBER $OUTFILE
+	mp3info -t "$TITLE" $OUTFILE
+	rm $TMPFILE
+}
+
+
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+for file in $(find $1 -name *.flac);
+do
+	flac_convert $file;
+done
+if [ -e $1/cover.jpg ];
+do
+	cp $1/cover.jpg $ARTIST/$ALBUM/cover.jpg
+done
+IFS=$SAVEIFS
