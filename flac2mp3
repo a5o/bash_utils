@@ -13,7 +13,7 @@ function flac_convert {
 	if [ "!$TITLE" = "!" ]; then
 		TITLE=Unknown
 	fi
-	TRACK_NUMBER=`metaflac --show-tag=TRACK_NUMBER $1|cut -d = -f 2`
+	TRACK_NUMBER=`metaflac --show-tag=TRACKNUMBER $1|cut -d = -f 2`
 	if [ "!$TRACK_NUMBER" = "!" ]; then
 		TRACK_NUMBER=0
 	fi
