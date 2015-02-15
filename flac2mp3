@@ -52,6 +52,6 @@ do
 done
 if [ -e $1/cover.jpg ] ;
 then
-	cp $1/cover.jpg $ARTIST/$ALBUM/cover.jpg
+	cp $1/cover.jpg $(echo $ARTIST|sed -e 's/[^A-Za-z0-9._-]/_/g')/$(echo $ALBUM |sed -e 's/[^A-Za-z0-9._-]/_/g')/cover.jpg
 fi
 IFS=$SAVEIFS
